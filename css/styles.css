@@ -1,0 +1,15 @@
+body {
+    width: 350px!important;
+    height: 500px!important;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+img {
+  height: 25px;
+  width: 25px;
+}
+
+.navbar {
+  background-color: #0070ba !important;
+  color: #fefefefe !important;
+}
