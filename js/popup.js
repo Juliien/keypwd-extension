@@ -49,17 +49,26 @@ const displayList = () => {
         emptyList.innerHTML = ""
 
         let kk = '';
-
-        for(let i = 0; i < pwdList.length; i++){
-            kk += "<li>"+
-                pwdList[i].title
-                + " - " +
-                pwdList[i].username
-                + " - " +
-                pwdList[i].password
-                +"</li>"
+        for(let i = 0; i < pwdList.length; i++) {
+            kk += "<tr> <td>" +
+                    pwdList[i].title +
+                " </td> <td>" +
+                    pwdList[i].username +
+                " </td> <td> " +
+                    pwdList[i].password +
+                "</td> </tr>"
         }
-        currentList.innerHTML = kk;
+
+        currentList.innerHTML = "<thead>\n" +
+            "              <tr>\n" +
+            "                  <th scope=\"col\">Site</th>\n" +
+            "                  <th scope=\"col\">Username</th>\n" +
+            "                  <th scope=\"col\">Password</th>\n" +
+            "              </tr>\n" +
+            "          </thead>\n" +
+            "          <tbody>\n" +
+                        kk +
+            "          </tbody>";
 
         // if(pwdList[i].favIconUrl) {
         //     document.getElementById("faveIcon").innerHTML = "<img src=" + pwdList[0].favIconUrl + ">";
