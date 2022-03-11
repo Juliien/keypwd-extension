@@ -2,6 +2,7 @@
 const btnPassword = document.getElementById("generate-password");
 const btnShow = document.getElementById("show-password");
 const userInput = document.getElementById("user-input");
+const currentList = document.getElementById("list");
 
 const specials = '!@#$%^&*_+-?';
 const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -36,13 +37,25 @@ btnPassword.addEventListener("click", async () => {
 
 
 btnShow.addEventListener("click", async () => {
-    if(pwdList > 0) {
-        if(pwdList[0].favIconUrl) {
-            document.getElementById("faveIcon").innerHTML = "<img src=" + pwdList[0].favIconUrl + ">";
+    if(pwdList.length > 0) {
+        document.getElementById("no-list").innerHTML = ""
+
+        var kk="";
+
+        for(i = 0; i < pwdList.length; i++){
+            kk += "<li>"+
+                    pwdList[i].title
+            +
+                    pwdList[i].username
+            +
+                    pwdList[i].password
+                +"</li>"
         }
-        document.getElementById("title").innerHTML = pwdList[0].title;
-        document.getElementById("username").innerHTML = pwdList[0].username;
-        document.getElementById("password").innerHTML = pwdList[0].password;
+        currentList.innerHTML = kk;
+
+        // if(pwdList[i].favIconUrl) {
+        //     document.getElementById("faveIcon").innerHTML = "<img src=" + pwdList[0].favIconUrl + ">";
+        // }
     } else {
         document.getElementById("no-list").innerHTML = "Vous n'avez aucun mot de passe"
     }
