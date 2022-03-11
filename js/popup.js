@@ -1,20 +1,21 @@
+"use strict";
+
 // Content
 const btnPassword = document.getElementById("generate-password");
-const btnSearch = document.getElementById("btn-search");
 const userInput = document.getElementById("user-input");
 const searchInput  = document.getElementById("search")
 const currentList = document.getElementById("list");
 const emptyList  = document.getElementById("empty-list")
 
-const specials = '!@#$%^&*_+-?';
-const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const numbers = '0123456789';
-const all = specials + lowercase + uppercase + numbers;
-
 let pwdList = [];
 
-
+const TypesEnum = Object.freeze({
+    specials: '!@#$%^&*_+-?',
+    lowercase:'abcdefghijklmnopqrstuvwxyz',
+    uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    numbers: '0123456789',
+    all: ('!@#$%^&*_+-?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+});
 
 /**
  * Display list when open the extension
@@ -24,12 +25,12 @@ window.onload = () => {
         pwdList = keys;
         displayList(pwdList);
     });
-
 }
 
-btnPassword.addEventListener("click", async () => {
-    const tab  = await  getCurrentTab();
-    const password = (specials.picker(4) + lowercase.picker(4) + uppercase.picker(4) + all.picker(10)).shuffle();
+btnPassword.addEventListener('click', async () => {
+    const tab  = await getCurrentTab();
+    const password = (TypesEnum.specials.picker(4) + TypesEnum.lowercase.picker(4) +
+        TypesEnum.uppercase.picker(4) + TypesEnum.all.picker(10)).shuffle();
 
     const key = {
         title: tab.title,
@@ -45,20 +46,23 @@ btnPassword.addEventListener("click", async () => {
     });
 });
 
-btnSearch.addEventListener("click", async () => {
+searchInput.addEventListener('change', () => {
     const filteredList = filterPwdList();
     displayList(filteredList, true);
 });
 
-
+/**
+ * Return the user current tab
+ * @returns {Promise<*>}
+ */
 const getCurrentTab = async () => {
     let queryOptions = { active: true, currentWindow: true };
     let [tab] = await chrome.tabs.query(queryOptions);
     return tab;
 }
 
-const filterPwdList = async () => {
-    return pwdList.filter(word => searchInput === word.url || searchInput === word.username || searchInput === word.title)
+const filterPwdList = () => {
+    return pwdList.filter(word => searchInput.value === word.url || searchInput.value === word.username || searchInput.value === word.title);
 }
 
 const displayList = (displayList, isFiltered= false) => {
@@ -67,32 +71,33 @@ const displayList = (displayList, isFiltered= false) => {
 
     if(displayList.length > 0) {
         let image;
-        let kk = '';
+        let tableBody = '';
         for(let i = 0; i < displayList.length; i++) {
             if(displayList[i].favIconUrl) {
                 image = "<img src=" + displayList[i].favIconUrl + ">";
             } else {
                 image = '<img src="">';
             }
-            kk += "<tr> <td>" +
+            tableBody += "<tr> <td>" +
                 image +
                 '</td> <td> <p class="truncate">' +
                 displayList[i].username +
-                " </p></td> <td> " +
-                displayList[i].password +
-                "</td> </tr>"
+                " </p></td><td>" +
+                "     <span class=\"material-icons\">visibility</span>\n" +
+                "      <span class=\"material-icons\">content_copy</span>\n" +
+                "      <span class=\"material-icons\">delete</span>" +
+                "</td></tr>"
         }
 
         currentList.innerHTML = "<thead>" +
             "   <tr>" +
             "       <th scope=\"col\">Site</th>" +
-            "       <th scope=\"col\">Username</th>" +
-            "       <th scope=\"col\">Password</th>" +
-            "       <th scope=\"col\">Actions</th>" +
+            "       <th scope=\"col\">Identifiant</th>" +
+            "       <th scope=\"col\">Mot de passe</th>" +
             "   </tr>" +
             " </thead>" +
             " <tbody>" +
-                kk +
+                tableBody +
             "</tbody>";
     } else {
         emptyList.innerHTML = (isFiltered) ? `Aucun filtre trouver pour "${searchInput.value}"`: 'Vous n\'avez aucun mot de passe';
