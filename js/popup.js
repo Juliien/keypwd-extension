@@ -1,6 +1,8 @@
 // Content
 const btnPassword = document.getElementById("generate-password");
+const btnSearch = document.getElementById("btn-search");
 const userInput = document.getElementById("user-input");
+const searchInput  = document.getElementById("search")
 const currentList = document.getElementById("list");
 const emptyList  = document.getElementById("empty-list")
 
@@ -13,11 +15,14 @@ const all = specials + lowercase + uppercase + numbers;
 let pwdList = [];
 
 
-// on windows load
+
+/**
+ * Display list when open the extension
+ */
 window.onload = () => {
     chrome.storage.sync.get("keys", ({ keys }) => {
         pwdList = keys;
-        displayList();
+        displayList(pwdList);
     });
 
 }
@@ -33,56 +38,65 @@ btnPassword.addEventListener("click", async () => {
         username: userInput.value,
         password: password
     }
-
     pwdList.push(key);
-
-    displayList();
-
+    displayList(pwdList);
     chrome.storage.sync.set({
         keys: pwdList
     });
 });
 
-const displayList = () => {
-    if(pwdList.length > 0) {
-        emptyList.innerHTML = ""
-        let image;
-        let kk = '';
-        for(let i = 0; i < pwdList.length; i++) {
-            if(pwdList[i].favIconUrl) {
-                image = "<img src=" + pwdList[i].favIconUrl + ">";
-            } else {
-                image = '<img src="">';
-            }
-            kk += "<tr> <td>" +
-                    image +
-                '</td> <td> <p class="truncate">' +
-                    pwdList[i].username +
-                " </p></td> <td> " +
-                    pwdList[i].password +
-                "</td> </tr>"
-        }
+btnSearch.addEventListener("click", async () => {
+    const filteredList = filterPwdList();
+    displayList(filteredList, true);
+});
 
-        currentList.innerHTML = "<thead>\n" +
-            "              <tr>\n" +
-            "                  <th scope=\"col\">Site</th>\n" +
-            "                  <th scope=\"col\">Username</th>\n" +
-            "                  <th scope=\"col\">Password</th>\n" +
-            "              </tr>\n" +
-            "          </thead>\n" +
-            "          <tbody>\n" +
-                        kk +
-            "          </tbody>";
-
-    } else {
-        emptyList.innerHTML = "Vous n'avez aucun mot de passe"
-    }
-}
 
 const getCurrentTab = async () => {
     let queryOptions = { active: true, currentWindow: true };
     let [tab] = await chrome.tabs.query(queryOptions);
     return tab;
+}
+
+const filterPwdList = async () => {
+    return pwdList.filter(word => searchInput === word.url || searchInput === word.username || searchInput === word.title)
+}
+
+const displayList = (displayList, isFiltered= false) => {
+    emptyList.innerHTML = ""
+    currentList.innerHTML = ""
+
+    if(displayList.length > 0) {
+        let image;
+        let kk = '';
+        for(let i = 0; i < displayList.length; i++) {
+            if(displayList[i].favIconUrl) {
+                image = "<img src=" + displayList[i].favIconUrl + ">";
+            } else {
+                image = '<img src="">';
+            }
+            kk += "<tr> <td>" +
+                image +
+                '</td> <td> <p class="truncate">' +
+                displayList[i].username +
+                " </p></td> <td> " +
+                displayList[i].password +
+                "</td> </tr>"
+        }
+
+        currentList.innerHTML = "<thead>" +
+            "   <tr>" +
+            "       <th scope=\"col\">Site</th>" +
+            "       <th scope=\"col\">Username</th>" +
+            "       <th scope=\"col\">Password</th>" +
+            "       <th scope=\"col\">Actions</th>" +
+            "   </tr>" +
+            " </thead>" +
+            " <tbody>" +
+                kk +
+            "</tbody>";
+    } else {
+        emptyList.innerHTML = (isFiltered) ? `Aucun filtre trouver pour "${searchInput.value}"`: 'Vous n\'avez aucun mot de passe';
+    }
 }
 
 String.prototype.picker = function(n) {

@@ -10,23 +10,34 @@
         <p class="navbar-brand mb-0 h1 ms-2 text-center">Keypwd</p>
       </nav>
 
+      <!-- @TODO import & export of data-->
       <div class="d-flex justify-content-center my-2">
-          <!-- @TODO -->
           <button class="btn btn-outline-primary btn-sm me-1" id="export">sauvegarder le fichier</button>
           <button class="btn btn-outline-primary btn-sm ms-1" id="import">importer un ficher</button>
       </div>
 
-      <p class="text-center">Mettez vous sur la page du site pour lequel vous voulez générer le mot de pass</p>
-      <div class="d-grid gap-2 col-10 mx-auto">
+      <p class="text-center mt-5">Mettez vous sur la page du site pour lequel vous voulez générer le mot de passe.</p>
+
+      <div class="d-grid gap-2 col-10 mx-auto mb-5">
+          <label for="user-input" class="form-label">Entrer un identifiant</label>
           <input type="text" id="user-input" placeholder="identifiant" class="form-control"/>
           <button class="btn btn-primary" id="generate-password">Généré un mot de passe sécurisé</button>
       </div>
-      <p id="empty-list" class="text-center mt-4"></p>
+
+      <!-- Search input -->
+      <div class="d-grid gap-2 col-10 mx-auto">
+          <div class="input-group">
+              <input type="text" class="form-control" id="search" placeholder="Rechercher" araria-describedby="btn-search">
+              <button class="btn btn-outline-secondary" type="button" id="btn-search">Button</button>
+          </div>
+      </div>
+
+      <p id="empty-list" class="text-center"></p>
       <div class="table-responsive">
         <table class="table px-1" id="list"></table>
       </div>
 
-    <!-- import current js script -->
+    <!-- import js script -->
     <script src="/js/popup.js"></script>
   </body>
 </html>

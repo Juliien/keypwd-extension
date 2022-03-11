@@ -15,8 +15,8 @@ img {
 }
 
 .truncate {
-    width: 200px;
-    white-space: nowrap;
+    inline-size: 150px;
     overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
 }
