@@ -3,6 +3,7 @@ const btnPassword = document.getElementById("generate-password");
 const btnShow = document.getElementById("show-password");
 const userInput = document.getElementById("user-input");
 const currentList = document.getElementById("list");
+const emptyList  = document.getElementById("empty-list")
 
 const specials = '!@#$%^&*_+-?';
 const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -29,7 +30,10 @@ btnPassword.addEventListener("click", async () => {
         password: password
     }
 
-    pwdList.push(key)
+    pwdList.push(key);
+
+    displayList();
+
     chrome.storage.sync.set({
         keys: pwdList
     });
@@ -37,18 +41,22 @@ btnPassword.addEventListener("click", async () => {
 
 
 btnShow.addEventListener("click", async () => {
+    displayList();
+});
+
+const displayList = () => {
     if(pwdList.length > 0) {
-        document.getElementById("no-list").innerHTML = ""
+        emptyList.innerHTML = ""
 
-        var kk="";
+        let kk = '';
 
-        for(i = 0; i < pwdList.length; i++){
+        for(let i = 0; i < pwdList.length; i++){
             kk += "<li>"+
-                    pwdList[i].title
-            +
-                    pwdList[i].username
-            +
-                    pwdList[i].password
+                pwdList[i].title
+                + " - " +
+                pwdList[i].username
+                + " - " +
+                pwdList[i].password
                 +"</li>"
         }
         currentList.innerHTML = kk;
@@ -57,10 +65,9 @@ btnShow.addEventListener("click", async () => {
         //     document.getElementById("faveIcon").innerHTML = "<img src=" + pwdList[0].favIconUrl + ">";
         // }
     } else {
-        document.getElementById("no-list").innerHTML = "Vous n'avez aucun mot de passe"
+        emptyList.innerHTML = "Vous n'avez aucun mot de passe"
     }
-});
-
+}
 
 const getCurrentTab = async () => {
     let queryOptions = { active: true, currentWindow: true };
