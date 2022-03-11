@@ -1,11 +1,25 @@
 {
-    "name": "MyGES Calandar",
+    "name": "keypwd-extension",
+    "description": "Chrome extension generate and store password",
     "version": "1.0.0",
     "manifest_version": 3,
+    "permissions": [
+      "storage",
+      "activeTab",
+      "scripting",
+      "tabs"
+    ],
+    "host_permissions": [
+      "https://www.google.com/*"
+    ],
+    "action": {
+      "default_icon" : "/images/icon.png",
+      "default_popup": "/pages/popup.html"
+    },
+    "icons": {
+      "128" : "images/icon_128.ico"
+    },
     "background": {
       "service_worker": "js/background.js"
-    },
-    "action": {
-        "default_popup": "pages/popup.html"
     }
   }
