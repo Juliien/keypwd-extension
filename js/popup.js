@@ -1,6 +1,5 @@
 // Content
 const btnPassword = document.getElementById("generate-password");
-const btnShow = document.getElementById("show-password");
 const userInput = document.getElementById("user-input");
 const currentList = document.getElementById("list");
 const emptyList  = document.getElementById("empty-list")
@@ -14,9 +13,14 @@ const all = specials + lowercase + uppercase + numbers;
 let pwdList = [];
 
 
-chrome.storage.sync.get("keys", ({ keys }) => {
-    pwdList = keys;
-});
+// on windows load
+window.onload = () => {
+    chrome.storage.sync.get("keys", ({ keys }) => {
+        pwdList = keys;
+        displayList();
+    });
+
+}
 
 btnPassword.addEventListener("click", async () => {
     const tab  = await  getCurrentTab();
@@ -39,22 +43,22 @@ btnPassword.addEventListener("click", async () => {
     });
 });
 
-
-btnShow.addEventListener("click", async () => {
-    displayList();
-});
-
 const displayList = () => {
     if(pwdList.length > 0) {
         emptyList.innerHTML = ""
-
+        let image;
         let kk = '';
         for(let i = 0; i < pwdList.length; i++) {
+            if(pwdList[i].favIconUrl) {
+                image = "<img src=" + pwdList[i].favIconUrl + ">";
+            } else {
+                image = '<img src="">';
+            }
             kk += "<tr> <td>" +
-                    pwdList[i].title +
-                " </td> <td>" +
+                    image +
+                '</td> <td> <p class="truncate">' +
                     pwdList[i].username +
-                " </td> <td> " +
+                " </p></td> <td> " +
                     pwdList[i].password +
                 "</td> </tr>"
         }
@@ -70,9 +74,6 @@ const displayList = () => {
                         kk +
             "          </tbody>";
 
-        // if(pwdList[i].favIconUrl) {
-        //     document.getElementById("faveIcon").innerHTML = "<img src=" + pwdList[0].favIconUrl + ">";
-        // }
     } else {
         emptyList.innerHTML = "Vous n'avez aucun mot de passe"
     }

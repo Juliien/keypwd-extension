@@ -7,21 +7,24 @@
   </head>
   <body>
       <nav class="navbar">
-        <p class="navbar-brand mb-0 h1 ms-2">Keypwd</p>
+        <p class="navbar-brand mb-0 h1 ms-2 text-center">Keypwd</p>
       </nav>
 
-      <!-- @TODO -->
-      <button class="btn btn-primary" id="export">sauvegarder le fichier</button>
-      <button class="btn btn-primary" id="import">importer un ficher</button>
+      <div class="d-flex justify-content-center my-2">
+          <!-- @TODO -->
+          <button class="btn btn-outline-primary btn-sm me-1" id="export">sauvegarder le fichier</button>
+          <button class="btn btn-outline-primary btn-sm ms-1" id="import">importer un ficher</button>
+      </div>
 
-
-      <input type="text" id="user-input" placeholder="identifiant" class="my-2"/>
-      <button class="btn btn-primary" id="generate-password">Généré un mot de passe sécurisé</button>
-
-      <button class="btn btn-primary" id="show-password">voir la list</button>
-
-      <p id="empty-list"></p>
-      <table class="table" id="list"></table>
+      <p class="text-center">Mettez vous sur la page du site pour lequel vous voulez générer le mot de pass</p>
+      <div class="d-grid gap-2 col-10 mx-auto">
+          <input type="text" id="user-input" placeholder="identifiant" class="form-control"/>
+          <button class="btn btn-primary" id="generate-password">Généré un mot de passe sécurisé</button>
+      </div>
+      <p id="empty-list" class="text-center mt-4"></p>
+      <div class="table-responsive">
+        <table class="table px-1" id="list"></table>
+      </div>
 
     <!-- import current js script -->
     <script src="/js/popup.js"></script>

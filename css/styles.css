@@ -13,3 +13,10 @@ img {
   background-color: #0070ba !important;
   color: #fefefefe !important;
 }
+
+.truncate {
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
