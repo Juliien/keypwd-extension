@@ -1,5 +1,5 @@
 body {
-    width: 450px!important;
+    width: 500px!important;
     height: 500px!important;
     font-family: 'Source Sans Pro', sans-serif;
 }
@@ -36,11 +36,10 @@ img {
     border-color: #ced4da;
 }
 
-.btn-icon {
-    border-radius: 50px;
-}
-
-.btn-icon:focus, .btn-icon:hover {
-    box-shadow: unset;
-    color: #0070ba;
+.btn-outline-danger {
+    align-items: center;
+    display: flex;
+    padding: 5px;
+    border-radius: 50%;
+    margin-left: -11px;
 }

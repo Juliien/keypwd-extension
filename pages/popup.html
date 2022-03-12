@@ -34,9 +34,22 @@
           </div>
       </div>
 
+      <table class="table align-middle">
+          <thead>
+              <tr>
+                  <th scope="col">Site</th>
+                  <th scope="col">Identifiant</th>
+                  <th scope="col">Mot de passe</th>
+                  <th scope="col">
+                      <button class="btn btn-outline-danger" id="delete">
+                          <span class="material-icons">delete</span>
+                      </button>
+                  </th>
+              </tr>
+          </thead>
+          <tbody id="list"></tbody>
+      </table>
       <p id="empty-list" class="text-center mt-2"></p>
-      <table class="table align-middle" id="list"></table>
-
       <!-- modal show password -->
 <!--      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
 <!--          <div class="modal-dialog">-->

@@ -9,9 +9,9 @@ const userInput = document.getElementById("user-input");
 const searchInput  = document.getElementById("search")
 const currentList = document.getElementById("list");
 const emptyList  = document.getElementById("empty-list")
+const btnDelete = document.getElementById("delete")
 
 let pwdList = [];
-let deleteItem;
 
 const TypesEnum = Object.freeze({
     specials: '!@#$%^&*_+-?',
@@ -28,7 +28,6 @@ window.onload = () => {
     chrome.storage.sync.get("keys", ({ keys }) => {
         pwdList = keys;
         displayList(pwdList);
-        deleteItem = document.getElementById("delete")
     });
 }
 
@@ -60,9 +59,16 @@ searchInput.addEventListener('change', () => {
     }
 });
 
-if (deleteItem) {
-    deleteItem.addEventListener('click', () => {
-        console.log(e);
+btnDelete.addEventListener('click', () => {
+    let values = [];
+    let userForm = document.forms['user-keys'].elements['key'];
+    console.log(userForm);
+    // for (let i = 0, cbLen = cbs.length; i < cbLen; i++) {
+    //     if (cbs[i].checked) {
+    //         values.push(cbs[i].value);
+    //     }
+    // }
+    // console.log(values.join(', '))
     //     const index = pwdList.indexOf(pwd);
     //     console.log(pwd, index)
     //     if (index > -1) {
@@ -74,8 +80,7 @@ if (deleteItem) {
     //     chrome.storage.sync.set({
     //         keys: pwdList
     //     });
-    });
-}
+});
 
 
 /**
@@ -94,21 +99,17 @@ const filterPwdList = () => {
     return pwdList.filter(word => searchInput.value === word.url || searchInput.value === word.username || searchInput.value === word.title);
 }
 
-// const copyPassword = (pwd) => {
-//     return navigator.clipboard.writeText(pwd);
-// }
-
-
 const displayList = (displayList, isFiltered= false) => {
-    emptyList.innerHTML = ""
-    currentList.innerHTML = ""
+    emptyList.innerHTML = '';
+    currentList.innerHTML = '';
 
     if(displayList.length > 0) {
         let image;
         let tableBody = '';
+
         for(let i = 0; i < displayList.length; i++) {
             if(displayList[i].favIconUrl) {
-                image = `<img src="${displayList[i].favIconUrl}" alt="site icon">`;
+                image = `<img src="${displayList[i].favIconUrl}" alt="icon of the site">`;
             } else {
                 image = '<img src="" alt="">';
             }
@@ -116,34 +117,16 @@ const displayList = (displayList, isFiltered= false) => {
             tableBody += `
             <tr>
                 <td class="col-1"><a href="${displayList[i].url}" target="_blank">${image}</a></td>
-                <td class="col-4"><span class="truncate">${displayList[i].username}</span></td>
-                <td class="col-7"><span>${displayList[i].password}</span>
-<!--                    <div class="d-flex justify-content-start">-->
-<!--                        <button class="btn btn-sm btn-icon" data-bs-toggle="modal" data-bs-target="#exampleModal">-->
-<!--                            <span class="material-icons">visibility</span>-->
-<!--                        </button>-->
-<!--                        <button class="btn btn-sm btn-icon">-->
-<!--                            <span class="material-icons">content_copy</span>-->
-<!--                        </button>-->
-<!--                        <button class="btn btn-sm btn-icon" id="delete">-->
-<!--                            <span class="material-icons" style="color:red">delete</span>-->
-<!--                        </button>-->
-<!--                    </div>-->
-                </td>
+                <td class="col-3"><span class="truncate">${displayList[i].username}</span></td>
+                <td class="col-7"><span>${displayList[i].password}</span></td>
+                <td class="col-1"><input class="form-check-input" type="checkbox" name="key" value="${displayList[i].password}"></td>
             </tr>`;
         }
 
         currentList.innerHTML = `
-        <thead>
-            <tr>
-                <th scope="col">Site</th>
-                <th scope="col">Identifiant</th>
-                <th scope="col">Mot de passe</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${tableBody}
-        </tbody>`;
+            <form name="user-keys" class="form-check">
+                ${tableBody}
+            </form>`;
     } else {
         emptyList.innerHTML = (isFiltered) ? `Aucun filtre trouver pour "${searchInput.value}"`: 'Vous n\'avez aucun mot de passe';
     }
