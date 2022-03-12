@@ -1,6 +1,9 @@
 "use strict";
 
-// Content
+/**
+ * @author Julien Da Corte
+ */
+
 const btnPassword = document.getElementById("generate-password");
 const userInput = document.getElementById("user-input");
 const searchInput  = document.getElementById("search")
@@ -8,6 +11,7 @@ const currentList = document.getElementById("list");
 const emptyList  = document.getElementById("empty-list")
 
 let pwdList = [];
+let deleteItem;
 
 const TypesEnum = Object.freeze({
     specials: '!@#$%^&*_+-?',
@@ -24,6 +28,7 @@ window.onload = () => {
     chrome.storage.sync.get("keys", ({ keys }) => {
         pwdList = keys;
         displayList(pwdList);
+        deleteItem = document.getElementById("delete")
     });
 }
 
@@ -47,13 +52,34 @@ btnPassword.addEventListener('click', async () => {
 });
 
 searchInput.addEventListener('change', () => {
-    const filteredList = filterPwdList();
-    displayList(filteredList, true);
+    if(searchInput.value.length === 0) {
+        displayList(pwdList);
+    } else {
+        const filteredList = filterPwdList();
+        displayList(filteredList, true);
+    }
 });
+
+if (deleteItem) {
+    deleteItem.addEventListener('click', () => {
+        console.log(e);
+    //     const index = pwdList.indexOf(pwd);
+    //     console.log(pwd, index)
+    //     if (index > -1) {
+    //         pwdList.splice(index, 1);
+    //     }
+    //     displayList(pwdList);
+    //     deletePassword(pwd)
+    //     displayList(pwdList);
+    //     chrome.storage.sync.set({
+    //         keys: pwdList
+    //     });
+    });
+}
+
 
 /**
  * Return the user current tab
- * @returns {Promise<*>}
  */
 const getCurrentTab = async () => {
     let queryOptions = { active: true, currentWindow: true };
@@ -61,9 +87,17 @@ const getCurrentTab = async () => {
     return tab;
 }
 
+/**
+ * Return the pwdList filtered by user choice
+ */
 const filterPwdList = () => {
     return pwdList.filter(word => searchInput.value === word.url || searchInput.value === word.username || searchInput.value === word.title);
 }
+
+// const copyPassword = (pwd) => {
+//     return navigator.clipboard.writeText(pwd);
+// }
+
 
 const displayList = (displayList, isFiltered= false) => {
     emptyList.innerHTML = ""
@@ -74,31 +108,42 @@ const displayList = (displayList, isFiltered= false) => {
         let tableBody = '';
         for(let i = 0; i < displayList.length; i++) {
             if(displayList[i].favIconUrl) {
-                image = "<img src=" + displayList[i].favIconUrl + ">";
+                image = `<img src="${displayList[i].favIconUrl}" alt="site icon">`;
             } else {
-                image = '<img src="">';
+                image = '<img src="" alt="">';
             }
-            tableBody += "<tr> <td>" +
-                image +
-                '</td> <td> <p class="truncate">' +
-                displayList[i].username +
-                " </p></td><td>" +
-                "     <span class=\"material-icons\">visibility</span>\n" +
-                "      <span class=\"material-icons\">content_copy</span>\n" +
-                "      <span class=\"material-icons\">delete</span>" +
-                "</td></tr>"
+
+            tableBody += `
+            <tr>
+                <td class="col-1"><a href="${displayList[i].url}" target="_blank">${image}</a></td>
+                <td class="col-4"><span class="truncate">${displayList[i].username}</span></td>
+                <td class="col-7"><span>${displayList[i].password}</span>
+<!--                    <div class="d-flex justify-content-start">-->
+<!--                        <button class="btn btn-sm btn-icon" data-bs-toggle="modal" data-bs-target="#exampleModal">-->
+<!--                            <span class="material-icons">visibility</span>-->
+<!--                        </button>-->
+<!--                        <button class="btn btn-sm btn-icon">-->
+<!--                            <span class="material-icons">content_copy</span>-->
+<!--                        </button>-->
+<!--                        <button class="btn btn-sm btn-icon" id="delete">-->
+<!--                            <span class="material-icons" style="color:red">delete</span>-->
+<!--                        </button>-->
+<!--                    </div>-->
+                </td>
+            </tr>`;
         }
 
-        currentList.innerHTML = "<thead>" +
-            "   <tr>" +
-            "       <th scope=\"col\">Site</th>" +
-            "       <th scope=\"col\">Identifiant</th>" +
-            "       <th scope=\"col\">Mot de passe</th>" +
-            "   </tr>" +
-            " </thead>" +
-            " <tbody>" +
-                tableBody +
-            "</tbody>";
+        currentList.innerHTML = `
+        <thead>
+            <tr>
+                <th scope="col">Site</th>
+                <th scope="col">Identifiant</th>
+                <th scope="col">Mot de passe</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${tableBody}
+        </tbody>`;
     } else {
         emptyList.innerHTML = (isFiltered) ? `Aucun filtre trouver pour "${searchInput.value}"`: 'Vous n\'avez aucun mot de passe';
     }
@@ -125,6 +170,5 @@ String.prototype.shuffle = function() {
             array[top] = tmp;
         }
     }
-
     return array.join('');
 };

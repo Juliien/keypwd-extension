@@ -1,5 +1,9 @@
 "use strict";
 
+/**
+ * @author Julien Da Corte
+ */
+
 const TypesEnum = Object.freeze({
     specials: '!@#$%^&*_+-?',
     lowercase:'abcdefghijklmnopqrstuvwxyz',

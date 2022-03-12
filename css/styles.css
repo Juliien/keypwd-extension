@@ -4,19 +4,43 @@ body {
     font-family: 'Source Sans Pro', sans-serif;
 }
 
+.navbar {
+    background-color: #0070ba !important;
+    color: #fefefefe !important;
+}
+
 img {
   height: 25px;
   width: 25px;
 }
 
-.navbar {
-  background-color: #0070ba !important;
-  color: #fefefefe !important;
-}
-
 .truncate {
-    inline-size: 250px;
-    overflow: hidden;
+    overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    width: 120px;
+    display: block;
+}
+
+.input-group-text {
+    background-color: white;
+    border-left: none;
+}
+
+.input-text {
+    border-right: none;
+}
+
+.input-text:focus {
+    box-shadow: unset;
+    border-color: #ced4da;
+}
+
+.btn-icon {
+    border-radius: 50px;
+}
+
+.btn-icon:focus, .btn-icon:hover {
+    box-shadow: unset;
+    color: #0070ba;
 }
