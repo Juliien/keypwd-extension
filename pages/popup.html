@@ -13,7 +13,9 @@
         <p class="navbar-brand mb-0 h1 ms-2 text-center">Keypwd</p>
       </nav>
 
-      <!-- @TODO import & export of data-->
+      <div id="alert" class="mx-3 my-2"></div>
+
+      <!-- Import and export of data button -->
       <div class="d-flex justify-content-center my-2">
           <button class="btn btn-outline-primary btn-sm me-1" id="export">sauvegarder le fichier</button>
           <button class="btn btn-outline-primary btn-sm ms-1" id="import">importer un ficher</button>
@@ -40,27 +42,13 @@
                   <th scope="col">Site</th>
                   <th scope="col">Identifiant</th>
                   <th scope="col">Mot de passe</th>
-                  <th scope="col">
-                      <button class="btn btn-outline-danger" id="delete">
-                          <span class="material-icons">delete</span>
-                      </button>
-                  </th>
               </tr>
           </thead>
           <tbody id="list"></tbody>
       </table>
       <p id="empty-list" class="text-center mt-2"></p>
-      <!-- modal show password -->
-<!--      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
-<!--          <div class="modal-dialog">-->
-<!--              <div class="modal-content">-->
-<!--                  <div class="modal-body">-->
-<!--                      ...-->
-<!--                  </div>-->
-<!--              </div>-->
-<!--          </div>-->
-<!--      </div>-->
+
       <!-- import js script -->
-      <script type="module" src="/js/popup.js"></script>
+      <script src="/js/popup.js"></script>
   </body>
 </html>

@@ -4,13 +4,15 @@
  * @author Julien Da Corte
  */
 
-const btnPassword = document.getElementById("generate-password");
-const userInput = document.getElementById("user-input");
-const searchInput  = document.getElementById("search")
-const currentList = document.getElementById("list");
-const emptyList  = document.getElementById("empty-list")
-const btnDelete = document.getElementById("delete")
+const btnPassword = document.getElementById('generate-password');
+const btnExport = document.getElementById('export');
+const userInput = document.getElementById('user-input');
+const searchInput  = document.getElementById('search');
+const currentList = document.getElementById('list');
+const emptyList  = document.getElementById('empty-list');
+const notification = document.getElementById('alert');
 
+const delayInMilliseconds = 2000; // 2 seconds
 let pwdList = [];
 
 const TypesEnum = Object.freeze({
@@ -20,6 +22,16 @@ const TypesEnum = Object.freeze({
     numbers: '0123456789',
     all: ('!@#$%^&*_+-?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
 });
+
+class User {
+    constructor(title, url, favIconUrl, username, password) {
+        this.title = title;
+        this.url = url;
+        this.favIconUrl = favIconUrl;
+        this.username = username;
+        this.password = password;
+    }
+}
 
 /**
  * Display list when open the extension
@@ -31,23 +43,22 @@ window.onload = () => {
     });
 }
 
+/**
+ * Event listener on password button
+ */
 btnPassword.addEventListener('click', async () => {
     const tab  = await getCurrentTab();
     const password = (TypesEnum.specials.picker(4) + TypesEnum.lowercase.picker(4) +
         TypesEnum.uppercase.picker(4) + TypesEnum.all.picker(10)).shuffle();
 
-    const key = {
-        title: tab.title,
-        url: tab.url,
-        favIconUrl: tab.favIconUrl,
-        username: userInput.value,
-        password: password
-    }
-    pwdList.push(key);
+    const user = new User(tab.title, tab.url, tab.favIconUrl, userInput.value, password);
+
+    pwdList.push(user);
     displayList(pwdList);
     chrome.storage.sync.set({
         keys: pwdList
     });
+    displayNotification('Enregistré !', 'success')
 });
 
 searchInput.addEventListener('change', () => {
@@ -59,32 +70,20 @@ searchInput.addEventListener('change', () => {
     }
 });
 
-btnDelete.addEventListener('click', () => {
-    let values = [];
-    let userForm = document.forms['user-keys'].elements['key'];
-    console.log(userForm);
-    // for (let i = 0, cbLen = cbs.length; i < cbLen; i++) {
-    //     if (cbs[i].checked) {
-    //         values.push(cbs[i].value);
-    //     }
-    // }
-    // console.log(values.join(', '))
-    //     const index = pwdList.indexOf(pwd);
-    //     console.log(pwd, index)
-    //     if (index > -1) {
-    //         pwdList.splice(index, 1);
-    //     }
-    //     displayList(pwdList);
-    //     deletePassword(pwd)
-    //     displayList(pwdList);
-    //     chrome.storage.sync.set({
-    //         keys: pwdList
-    //     });
+btnExport.addEventListener('click', () => {
+    const userData = JSON.stringify(pwdList);
+    const blob = new Blob([userData], {type: 'application/json'});
+    let anchor = document.createElement('a');
+    anchor.download = 'keypwd-saved-data.json';
+    anchor.href = window.URL.createObjectURL(blob);
+    anchor.innerHTML = 'download'
+    anchor.click();
+    displayNotification('Document exporter !', 'primary')
 });
 
-
 /**
- * Return the user current tab
+ * Return the user current tab in a Promise
+ * @returns {Promise<*>}
  */
 const getCurrentTab = async () => {
     let queryOptions = { active: true, currentWindow: true };
@@ -99,6 +98,29 @@ const filterPwdList = () => {
     return pwdList.filter(word => searchInput.value === word.url || searchInput.value === word.username || searchInput.value === word.title);
 }
 
+/**
+ * Generate notification that will be displayed during N seconds
+ * @param message
+ * @param type
+ */
+const displayNotification = (message, type) => {
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = `
+        <div class="alert alert-${type}" role="alert" style="padding: 5px !important;">
+            ${message}
+        </div>
+    `;
+    notification.append(wrapper);
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, delayInMilliseconds);
+}
+
+/**
+ * Display a table of list
+ * @param displayList
+ * @param isFiltered
+ */
 const displayList = (displayList, isFiltered= false) => {
     emptyList.innerHTML = '';
     currentList.innerHTML = '';
@@ -119,19 +141,19 @@ const displayList = (displayList, isFiltered= false) => {
                 <td class="col-1"><a href="${displayList[i].url}" target="_blank">${image}</a></td>
                 <td class="col-3"><span class="truncate">${displayList[i].username}</span></td>
                 <td class="col-7"><span>${displayList[i].password}</span></td>
-                <td class="col-1"><input class="form-check-input" type="checkbox" name="key" value="${displayList[i].password}"></td>
             </tr>`;
         }
-
-        currentList.innerHTML = `
-            <form name="user-keys" class="form-check">
-                ${tableBody}
-            </form>`;
+        currentList.innerHTML = tableBody;
     } else {
         emptyList.innerHTML = (isFiltered) ? `Aucun filtre trouver pour "${searchInput.value}"`: 'Vous n\'avez aucun mot de passe';
     }
 }
 
+/**
+ * Private function to pick random chars in list
+ * @param n
+ * @returns {string}
+ */
 String.prototype.picker = function(n) {
     let chars = '';
 
@@ -141,6 +163,10 @@ String.prototype.picker = function(n) {
     return chars;
 };
 
+/**
+ * Private function to shuffle the password
+ * @returns {string}
+ */
 String.prototype.shuffle = function() {
     let array = this.split('');
     let tmp, current, top = array.length;
