@@ -16,11 +16,14 @@
       <div id="alert" class="mx-3 my-2"></div>
 
       <!-- Import and export of data button -->
-      <div class="d-flex justify-content-center my-2">
-          <button class="btn btn-outline-primary btn-sm me-1" id="export">sauvegarder le fichier</button>
-          <button class="btn btn-outline-primary btn-sm ms-1" id="import">importer un ficher</button>
-      </div>
+          <div class="d-grid gap-2 col-10 mx-auto mb-5 mt-2">
+              <div class="d-flex justify-content-between">
+                  <input type="file" id="import"  accept=".json"/>
+                  <button id="import-button" class="btn btn-outline-primary btn-sm"> Upload file </button>
+              </div>
+              <button class="btn btn-outline-primary btn-sm" id="export">sauvegarder le fichier</button>
 
+          </div>
       <p class="text-center mt-5">Mettez vous sur la page du site pour lequel vous voulez générer le mot de passe.</p>
 
       <div class="d-grid gap-2 col-10 mx-auto mb-5">

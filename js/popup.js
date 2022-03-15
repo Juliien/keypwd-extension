@@ -6,11 +6,13 @@
 
 const btnPassword = document.getElementById('generate-password');
 const btnExport = document.getElementById('export');
+const btnImport = document.getElementById('import-button');
 const userInput = document.getElementById('user-input');
 const searchInput  = document.getElementById('search');
 const currentList = document.getElementById('list');
 const emptyList  = document.getElementById('empty-list');
 const notification = document.getElementById('alert');
+const fileSelector = document.getElementById('import');
 
 const delayInMilliseconds = 2000; // 2 seconds
 let pwdList = [];
@@ -81,6 +83,37 @@ btnExport.addEventListener('click', () => {
     displayNotification('Document exporter !', 'primary')
 });
 
+btnImport.addEventListener('click', async () => {
+        if(fileSelector.files[0]) {
+            const result = await readFile(fileSelector.files[0]);
+            pwdList = JSON.parse(result.toString());
+
+            displayList(pwdList);
+            chrome.storage.sync.set({
+                keys: pwdList
+            });
+            displayNotification('Fichier importé !', 'primary')
+        } else {
+            displayNotification('Aucun fichier selectionné !', 'danger')
+        }
+});
+
+
+const readFile = async (inputFile) => {
+    return new Promise((resolve, reject) => {
+        const temporaryFileReader = new FileReader();
+
+        temporaryFileReader.onerror = () => {
+            temporaryFileReader.abort();
+            reject(new DOMException("Problem parsing input file."));
+        };
+
+        temporaryFileReader.onload = () => {
+            resolve(temporaryFileReader.result);
+        };
+        temporaryFileReader.readAsText(inputFile);
+    });
+}
 /**
  * Return the user current tab in a Promise
  * @returns {Promise<*>}
