@@ -6,7 +6,6 @@
 
 const btnPassword = document.getElementById('generate-password');
 const btnExport = document.getElementById('export');
-const btnImport = document.getElementById('import-button');
 const userInput = document.getElementById('user-input');
 const searchInput  = document.getElementById('search');
 const currentList = document.getElementById('list');
@@ -63,6 +62,24 @@ btnPassword.addEventListener('click', async () => {
     displayNotification('Enregistré !', 'success')
 });
 
+/**
+ * Event listener allows uploading data.json
+ */
+fileSelector.addEventListener('change', async () => {
+    if(fileSelector.files[0]) {
+        const result = await readFile(fileSelector.files[0]);
+        pwdList = JSON.parse(result.toString());
+
+        displayList(pwdList);
+        chrome.storage.sync.set({
+            keys: pwdList
+        });
+        displayNotification('Fichier importé !', 'primary')
+    } else {
+        displayNotification('Aucun fichier selectionné !', 'danger')
+    }
+});
+
 searchInput.addEventListener('change', () => {
     if(searchInput.value.length === 0) {
         displayList(pwdList);
@@ -81,21 +98,6 @@ btnExport.addEventListener('click', () => {
     anchor.innerHTML = 'download'
     anchor.click();
     displayNotification('Document exporter !', 'primary')
-});
-
-btnImport.addEventListener('click', async () => {
-        if(fileSelector.files[0]) {
-            const result = await readFile(fileSelector.files[0]);
-            pwdList = JSON.parse(result.toString());
-
-            displayList(pwdList);
-            chrome.storage.sync.set({
-                keys: pwdList
-            });
-            displayNotification('Fichier importé !', 'primary')
-        } else {
-            displayNotification('Aucun fichier selectionné !', 'danger')
-        }
 });
 
 
